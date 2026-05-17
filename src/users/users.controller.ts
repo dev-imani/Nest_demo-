@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Post, Query, UsePipes, ValidationPipe, Pa
 import type { Request, Response } from 'express';
 import { CreateUserDto } from './create-user-dto';
 import { UsersService } from './users.service';
+import { ValidateCreateUserPipe } from './validate-create-user.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -48,11 +49,7 @@ export class UsersController {
 
   //Post requests
 
-  @Post()
-  createUser(@Req() request: Request, @Res() response: Response) {
-    console.log(request.body);
-    response.send('User Created');
-  }
+
 
 
   //Route Params
@@ -116,12 +113,12 @@ export class UsersController {
   fetchAllUsers() {
     return this.userService.fetchUsers()
   }
-  // @Post()
-  // @UsePipes(new ValidationPipe())
-  // createUser(@Body() userData: CreateUserDto) {
-  //   this.userService.createUser(userData);
-  //   return `User has been created`;
-  // }
+  @Post()
+  @UsePipes(new ValidationPipe())
+  createUser(@Body(ValidateCreateUserPipe) userData: CreateUserDto) {
+    this.userService.createUser(userData);
+    return `User has been created`;
+  }
 
   // @Get(':id')
   // getUserById(@Param('id', ParseIntPipe) id: number) {
